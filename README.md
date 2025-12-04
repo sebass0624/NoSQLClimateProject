@@ -4,7 +4,7 @@ Climate Monitoring Data Hub (MongoDB)
 
 This repository contains the Data Definition Language (DDL) and analytical aggregation pipelines (queries) for a MongoDB database designed to store and analyze real-time climate monitoring data.
 
-**I. Project Overview**
+**A. Project Overview**
 
 This project establishes a flexible NoSQL structure for managing three core types of climate data:
 
@@ -15,7 +15,7 @@ Monitor Maintenance: Records of maintenance events and costs for the equipment
 
 
 
-**II. Data Model & Denormalization Strategy**
+**B. Data Model & Denormalization Strategy**
 
 Unlike traditional SQL databases, this MongoDB schema utilizes denormalization to prioritize read speed for analytical queries.
 
@@ -23,7 +23,7 @@ Unlike traditional SQL databases, this MongoDB schema utilizes denormalization t
 
 
 
-**III. Data Setup (DDL)**
+**C. Data Setup (DDL)**
 
 The script for the NOSQLClimateDDL handles the entire database setup process.
 
@@ -43,7 +43,7 @@ idx_equipment_date (on monitormaintenance)
 
 
 
-**IV. Analytical Queries**
+**D. Analytical Queries**
 
 The AnalyticalQueries file contains three essential aggregation pipelines that extract high-value insights from climate data. These pipelines are simplified and optimized to retain a denormalized data structure. NoSQL queries are run in stages to manage distributed workloads across multiple servers, a process that is important when handling large datasets and ensuring resource reliability.
 
