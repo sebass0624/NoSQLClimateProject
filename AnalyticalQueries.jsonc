@@ -1,0 +1,158 @@
+// Google Gemini used to format it from rough-looking to readable
+// Analytical Queries
+[
+    // ====================================================================
+    // Analytical Query 1: Geospatial CO2 Averages and Global Comparison
+    // ====================================================================
+    // Purpose: Calculates the regional average CO2 reading, comparing it directly against the global average CO2 reading.
+    // Insight: Allows for understanding of regional contributions to atmospheric CO2 concentration and flagging regions that exceed the global benchmark.
+    {
+        "name": "Geospatial Averages Pipeline",
+        "description": "Calculates regional average CO2 and compares it to the global average.",
+        "pipeline": [
+            // Stage 1: Filter by Time (Matches the timestamp string format)
+            {
+                "$match": {
+                    "timestamp": {
+                        // Filter for timestamps greater than or equal to the start of 2025
+                        "$gte": "2025-01-01T00:00:00Z"
+                    }
+                }
+            },
+            // Stage 2: Calculate Country Averages (Output: _id (country_id), average_co2, readingsCount)
+            {
+                "$group": {
+                    "_id": "$country_id",
+                    "average_co2": {
+                        "$avg": "$co2_ppm"
+                    },
+                    "readingsCount": {
+                        "$sum": 1
+                    }
+                }
+            },
+            // Stage 3: Calculate Global Average
+            {
+                "$group": {
+                    "_id": null,
+                    // Calculate the global average using the regional averages from Stage 2
+                    "globalAverageCO2": {
+                        "$avg": "$average_co2"
+                    },
+                    // Collect all regional data into an array for the next stage
+                    "countryData": {
+                        "$push": "$$ROOT"
+                    }
+                }
+            },
+            // Stage 4: Deconstruct the regional data array
+            {
+                "$unwind": "$countryData"
+            },
+            // Stage 5: Project Final Results and Calculate Difference
+            {
+                "$project": {
+                    "_id": 0,
+                    "countryId": "$countryData._id",
+                    "countryAverageCO2": "$countryData.average_co2",
+                    "globalAverageCO2": "$globalAverageCO2",
+                    // Calculate the difference between regional and global averages
+                    "co2DifferenceFromGlobal": {
+                        "$subtract": [
+                            "$countryData.average_co2",
+                            "$globalAverageCO2"
+                        ]
+                    },
+                    // Conditional check to label the region's status
+                    "comparisonStatus": {
+                        "$cond": {
+                            "if": {
+                                "$gt": [
+                                    "$countryData.average_co2",
+                                    "$globalAverageCO2"
+                                ]
+                            },
+                            "then": "ABOVE_GLOBAL_AVERAGE",
+                            "else": "BELOW_OR_EQUAL_GLOBAL_AVERAGE"
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    // ====================================================================
+    // Analytical Query 2: Anomaly Detection and High-Level Alerting
+    // ====================================================================
+    // Purpose: Identifies and flags dangerous environmental readings based on a pre-defined threshold.
+    // Insight: Allows for immediate action on critical anomalies amongst the data.
+    {
+        "name": "Anomaly Detection Pipeline",
+        "description": "Filters for CO2 readings above a critical threshold (415 ppm) for immediate alerting.",
+        "pipeline": [
+            // Stage 1: Filter by Time Window
+            {
+                "$match": {
+                    "timestamp": {
+                        // Start date for the monitoring window
+                        "$gte": "2025-05-01T00:00:00Z"
+                    }
+                }
+            },
+            // Stage 2: Filter for Anomalous CO2 Readings
+            {
+                "$match": {
+                    "co2_ppm": {
+                        // Anomaly threshold: greater than 415 ppm
+                        "$gt": 415
+                    }
+                }
+            },
+            // Stage 3: Project the Key Information for Alerting
+            {
+                "$project": {
+                    "_id": 0,
+                    "Anomaly ID": "$_id",
+                    "Equipment ID": "$equipment_id",
+                    "Country ID": "$country_id",
+                    "Time of Reading": "$timestamp",
+                    "CO2 (ppm)": "$co2_ppm",
+                    "Anomaly Flag": true
+                }
+            }
+        ]
+    },
+    // ====================================================================
+    // Analytical Query 3: Data Volume Analysis for Infrastructure Planning
+    // ====================================================================
+    // Purpose: Measures data contribution from each region by counting the number of readings associated with each country_id.
+    // Insight: Useful for data integrity audits and allocation of monitoring infrastructure resources.
+    {
+        "name": "Data Volume Analysis Pipeline",
+        "description": "Counts the total number of readings per country and sorts descending.",
+        "pipeline": [
+            // Stage 1: Group by Country ID and Count Readings
+            {
+                "$group": {
+                    "_id": "$country_id",
+                    "total_readings_count": {
+                        "$sum": 1
+                    }
+                }
+            },
+            // Stage 2: Project and Rename Fields
+            {
+                "$project": {
+                    "_id": 0,
+                    "Country ID": "$_id",
+                    "Total Readings Count": "$total_readings_count"
+                }
+            },
+            // Stage 3: Sort by Count (Descending)
+            {
+                "$sort": {
+                    "Total Readings Count": -1
+                }
+            }
+        ]
+    }
+]
