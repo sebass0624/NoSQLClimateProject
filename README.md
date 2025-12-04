@@ -20,7 +20,8 @@ Unlike traditional SQL databases, this MongoDB schema utilizes denormalization t
 <img width="1260" height="166" alt="image" src="https://github.com/user-attachments/assets/3b1f72c6-46af-4a68-b4e5-6b12764f77f3" />
 
 
-3. Data Setup (DDL)
+
+III. Data Setup (DDL)
 
 The script for the NOSQLClimateDDL handles the entire database setup process.
 
@@ -39,7 +40,7 @@ idx_country (on readings.country)
 idx_equipment_date (on monitormaintenance)
 
 
-4. Analytical Queries
+IV. Analytical Queries
 
 The AnalyticalQueries file contains three essential aggregation pipelines that extract high-value insights from climate data. These pipelines are simplified and optimized to retain a denormalized data structure. NoSQL queries are run in stages to manage distributed workloads across multiple servers, a process that is important when handling large datasets and ensuring resource reliability.
 
