@@ -86,6 +86,7 @@ db.readings.insertMany([
     {
         equipment_id: "atlantic_buoy_a1", // <-- CORRECTED ID
         type: "buoy",
+        country: "USA",
         timestamp: ISODate("2025-06-01T10:00:00Z"),
         co2_ppm: 418.52,
         sea_temp_c: 19.35,
@@ -95,6 +96,7 @@ db.readings.insertMany([
     {
         equipment_id: "pacific_balloon_b1",
         type: "balloon",
+        country: "Japan",
         timestamp: ISODate("2025-06-01T10:05:00Z"),
         co2_ppm: 405.10,
         o3_ppb: 45.2,
@@ -104,6 +106,7 @@ db.readings.insertMany([
     {
         equipment_id: "indian_surface_monitor_c1",
         type: "surface_monitor",
+        country: "India",
         timestamp: ISODate("2025-06-01T10:10:00Z"),
         co2_ppm: 410.88,
         air_pressure_mb: 1002.5,
@@ -174,5 +177,6 @@ db.monitormaintenance.createIndex(
 );
 
 print("Created necessary indexes for all collections.");
+
 
 print("Data setup complete.");
