@@ -36,9 +36,13 @@ Script Steps:
 **Indexes:**
 
 idx_equipment_id_unique (on monitoring.equipment_id)
+
 idx_equipment_timestamp (on readings)
+
 idx_type_timestamp (on readings)
+
 idx_country (on readings.country)
+
 idx_equipment_date (on monitormaintenance)
 
 
