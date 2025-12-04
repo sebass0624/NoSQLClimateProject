@@ -22,7 +22,7 @@
             // Stage 2: Calculate Country Averages (Output: _id (country_id), average_co2, readingsCount)
             {
                 "$group": {
-                    "_id": "$country_id",
+                    "_id": "$country",
                     "average_co2": {
                         "$avg": "$co2_ppm"
                     },
@@ -113,7 +113,7 @@
                     "_id": 0,
                     "Anomaly ID": "$_id",
                     "Equipment ID": "$equipment_id",
-                    "Country ID": "$country_id",
+                    "Country ID": "$country",
                     "Time of Reading": "$timestamp",
                     "CO2 (ppm)": "$co2_ppm",
                     "Anomaly Flag": true
@@ -133,7 +133,7 @@
             // Stage 1: Group by Country ID and Count Readings
             {
                 "$group": {
-                    "_id": "$country_id",
+                    "_id": "$country",
                     "total_readings_count": {
                         "$sum": 1
                     }
@@ -155,4 +155,5 @@
             }
         ]
     }
+
 ]
