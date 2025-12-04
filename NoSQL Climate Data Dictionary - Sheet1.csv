@@ -1,0 +1,5 @@
+Collection,Description,Key Fields and Denormalization
+readings,"Time-series data. Stores high-volume, real-time sensor measurements","equipment_id (reference), timestamp (time-series index key), co2_ppm, temp_c, air_pressure_mb, country"
+monitoring,Device metadata. Stores static information about each monitoring device,"_id (MongoDB ObjectID), equipment_id (unique index), device_type, country, deployment_date, status"
+staff,Records of personnel. Stores relevant information about staff members,"_id (Static ObjectID), name, role, equipment"
+monitormaintenance,Maintenance log. Records all services and repair done to monitoring devices,"equipment_id (reference), date, description, cost, staff_id (reference)"
